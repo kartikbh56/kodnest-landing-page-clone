@@ -916,13 +916,10 @@ export default function FullStackPage() {
                       {module.title}
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {module.topics.map((topic, topicIndex) => (
-                        <span 
-                          key={topicIndex} 
-                          className="bg-yellow-400 px-4 py-2 rounded-md text-sm"
-                        >
+                      {module.topics.map((topic: any, topicIndex: number) => (
+                        <li key={topicIndex} className="text-gray-600">
                           {topic}
-                        </span>
+                        </li>
                       ))}
                     </div>
                   </div>
@@ -953,13 +950,10 @@ export default function FullStackPage() {
                       {module.title}
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {module.topics.map((topic, topicIndex) => (
-                        <span 
-                          key={topicIndex} 
-                          className="bg-yellow-400 px-4 py-2 rounded-md text-sm"
-                        >
+                      {module.topics.map((topic: any, topicIndex: number) => (
+                        <li key={topicIndex} className="text-gray-600">
                           {topic}
-                        </span>
+                        </li>
                       ))}
                     </div>
                   </div>
@@ -990,13 +984,10 @@ export default function FullStackPage() {
                       {module.title}
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {module.topics.map((topic, topicIndex) => (
-                        <span 
-                          key={topicIndex} 
-                          className="bg-yellow-400 px-4 py-2 rounded-md text-sm"
-                        >
+                      {module.topics.map((topic: any, topicIndex: number) => (
+                        <li key={topicIndex} className="text-gray-600">
                           {topic}
-                        </span>
+                        </li>
                       ))}
                     </div>
                   </div>
@@ -1027,13 +1018,10 @@ export default function FullStackPage() {
                       {module.title}
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {module.topics.map((topic, topicIndex) => (
-                        <span 
-                          key={topicIndex} 
-                          className="bg-yellow-400 px-4 py-2 rounded-md text-sm"
-                        >
+                      {module.topics.map((topic: any, topicIndex: number) => (
+                        <li key={topicIndex} className="text-gray-600">
                           {topic}
-                        </span>
+                        </li>
                       ))}
                     </div>
                   </div>
@@ -1070,7 +1058,7 @@ export default function FullStackPage() {
                             {module.title}
                           </h4>
                           <ul className="list-disc list-inside space-y-2">
-                            {module.topics.map((topic, topicIndex) => (
+                            {module.topics.map((topic: any, topicIndex: number) => (
                               <li key={topicIndex} className="text-gray-600">
                                 {topic}
                               </li>
