@@ -4,169 +4,90 @@ import { useState } from 'react';
 import Image from 'next/image'
 import Link from 'next/link'
 
-const nonTechnicalSyllabus = [
+// First, let's define the types
+interface SyllabusItem {
+  title: string;
+  description?: string;
+  topics?: string[];
+}
+
+const nonTechnicalSyllabus: any[] = [
   // ... your non-technical syllabus data
 ];
 
 export default function FullStackPage() {
-  const modules = {
-    java: [
-      {
-        title: "Module 1: Laying the Groundwork",
-        topics: [
-          "Introduction to Java",
-          "Programming in Java",
-          "Data Types",
-          "Operators",
-          "Methods"
-        ]
-      },
-      {
-        title: "Module 2: Diving into OOPs",
-        topics: [
-          "Introduction to OOP",
-          "Static",
-          "Inheritance",
-          "Constructors",
-          "Encapsulation",
-          "Polymorphism",
-          "Abstraction",
-          "Packages"
-        ]
-      },
-      {
-        title: "Module 3: Mastering the Logic",
-        topics: [
-          "Conditional Control Constructs",
-          "Looping Control Constructs",
-          "Jump Statements",
-          "Data Manipulation"
-        ]
-      },
-      {
-        title: "Module 4: Data Structures & Algorithms",
-        topics: [
-          "Arrays",
-          "Strings",
-          "Collections Framework",
-          "Advanced Programming",
-          "Algorithms"
-        ]
-      },
-      {
-        title: "Module 5: Exception Handling and Multi-threading",
-        topics: [
-          "Try-Catch Blocks",
-          "Throw and Throws",
-          "Finally Block",
-          "Custom Exceptions",
-          "Creating Threads",
-          "Synchronisation",
-          "Thread Communication",
-          "Concurrency Utilities"
-        ]
-      },
-      {
-        title: "Module 6: Java Frameworks & More",
-        topics: [
-          "Hibernate",
-          "Session Management",
-          "Mapping Entities",
-          "HQL",
-          "Caching",
-          "Spring Framework",
-          "Dependency Injection",
-          "Spring Boot",
-          "RESTful Services",
-          "Microservices"
-        ]
-      }
-    ],
-    python: [
-      {
-        title: "Module 1: Python essentials",
-        topics: [
-          "Introduction to Python",
-          "Features of Python",
-          "Python Code flow",
-          "Variables",
-          "Data types"
-        ]
-      },
-      {
-        title: "Module 2: Programming in Python",
-        topics: [
-          "Operators",
-          "Expressions",
-          "Functions",
-          "Modules",
-          "Control constructs"
-        ]
-      },
-      {
-        title: "Module 3: DSA in Python",
-        topics: [
-          "List",
-          "Tuple",
-          "Set",
-          "Dictionary",
-          "Comprehensions",
-          "Searching",
-          "Sorting"
-        ]
-      },
-      {
-        title: "Module 4: Object-Oriented Programming in Python",
-        topics: [
-          "Objects and Classes",
-          "Inheritance",
-          "Encapsulation",
-          "Polymorphism",
-          "Abstraction",
-          "Static"
-        ]
-      }
-    ],
-    frontend: [
-      {
-        title: "Module 1: HTML - Structuring a Web Page",
-        topics: [
-          "Getting Started with HTML",
-          "HTML Basic Tags",
-          "Lists in HTML",
-          "Tables in HTML",
-          "Multimedia Tags in HTML",
-          "More HTML Elements",
-          "HTML Forms",
-          "Semantic Tags"
-        ]
-      },
-      {
-        title: "Module 2: CSS - Style a Web Page",
-        topics: [
-          "Getting Started with CSS",
-          "CSS Basics",
-          "CSS Box Model",
-          "Positioning and Flexbox",
-          "Grid Layouts",
-          "Responsive Design",
-          "Transitions and Animations"
-        ]
-      },
-      {
-        title: "Module 3: JavaScript - Programming the Web",
-        topics: [
-          "Introduction to JavaScript",
-          "Control Structures",
-          "Functions and Scope",
-          "DOM Manipulation",
-          "Events and Event Handling",
-          "Arrays and Objects",
-          "Asynchronous JavaScript"
-        ]
-      }
-    ]
-  }
+  const modules: any[] = [
+    {
+      title: "Module 1: Laying the Groundwork",
+      topics: [
+        "Introduction to Java",
+        "Programming in Java",
+        "Data Types",
+        "Operators",
+        "Methods"
+      ]
+    },
+    {
+      title: "Module 2: Diving into OOPs",
+      topics: [
+        "Introduction to OOP",
+        "Static",
+        "Inheritance",
+        "Constructors",
+        "Encapsulation",
+        "Polymorphism",
+        "Abstraction",
+        "Packages"
+      ]
+    },
+    {
+      title: "Module 3: Mastering the Logic",
+      topics: [
+        "Conditional Control Constructs",
+        "Looping Control Constructs",
+        "Jump Statements",
+        "Data Manipulation"
+      ]
+    },
+    {
+      title: "Module 4: Data Structures & Algorithms",
+      topics: [
+        "Arrays",
+        "Strings",
+        "Collections Framework",
+        "Advanced Programming",
+        "Algorithms"
+      ]
+    },
+    {
+      title: "Module 5: Exception Handling and Multi-threading",
+      topics: [
+        "Try-Catch Blocks",
+        "Throw and Throws",
+        "Finally Block",
+        "Custom Exceptions",
+        "Creating Threads",
+        "Synchronisation",
+        "Thread Communication",
+        "Concurrency Utilities"
+      ]
+    },
+    {
+      title: "Module 6: Java Frameworks & More",
+      topics: [
+        "Hibernate",
+        "Session Management",
+        "Mapping Entities",
+        "HQL",
+        "Caching",
+        "Spring Framework",
+        "Dependency Injection",
+        "Spring Boot",
+        "RESTful Services",
+        "Microservices"
+      ]
+    }
+  ]
 
   const features = [
     {
@@ -187,14 +108,35 @@ export default function FullStackPage() {
     }
   ]
 
-  const tools = [
-    "VS code and Eclipse",
-    "Maven",
-    "Log4j",
-    "GIT",
-    "NPM",
-    "Heidi SQL",
-    "Docker"
+  const tools: any[] = [
+    {
+      title: "VS code and Eclipse",
+      description: "Essential tools for modern development"
+    },
+    {
+      title: "Maven",
+      description: "A build automation tool"
+    },
+    {
+      title: "Log4j",
+      description: "A logging framework"
+    },
+    {
+      title: "GIT",
+      description: "A distributed version control system"
+    },
+    {
+      title: "NPM",
+      description: "A package manager for Node.js"
+    },
+    {
+      title: "Heidi SQL",
+      description: "A graphical database management tool"
+    },
+    {
+      title: "Docker",
+      description: "A platform for developing, shipping, and running applications"
+    }
   ]
 
   const topics = [
@@ -249,7 +191,7 @@ export default function FullStackPage() {
     }
   ];
 
-  const testimonials = [
+  const testimonials: any[] = [
     {
       name: "Haveesh",
       image: "/images/testimonials/Haveesh.png",
