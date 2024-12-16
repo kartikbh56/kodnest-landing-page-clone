@@ -15,6 +15,12 @@ const nonTechnicalSyllabus: any[] = [
   // ... your non-technical syllabus data
 ];
 
+// Add this interface near the top of the file with other interfaces
+interface Module {
+  title: string;
+  topics: string[];
+}
+
 export default function FullStackPage() {
   const modules: any[] = [
     {
@@ -1058,21 +1064,18 @@ export default function FullStackPage() {
                       {section.title}
                     </h3>
                     <div className="space-y-6">
-                      {section.modules.map((module, moduleIndex) => (
+                      {section.modules.map((module: any, moduleIndex: number) => (
                         <div key={moduleIndex} className="bg-white rounded-lg shadow-lg p-8">
                           <h4 className="text-xl font-bold mb-4">
                             {module.title}
                           </h4>
-                          <div className="flex flex-wrap gap-2">
+                          <ul className="list-disc list-inside space-y-2">
                             {module.topics.map((topic, topicIndex) => (
-                              <span 
-                                key={topicIndex} 
-                                className="bg-yellow-400 px-4 py-2 rounded-md text-sm"
-                              >
+                              <li key={topicIndex} className="text-gray-600">
                                 {topic}
-                              </span>
+                              </li>
                             ))}
-                          </div>
+                          </ul>
                         </div>
                       ))}
                     </div>
