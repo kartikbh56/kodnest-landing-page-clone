@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#FFD700', // Adjust this to match KodNest's yellow
+        primary: '#FFD700',
       },
     },
   },
