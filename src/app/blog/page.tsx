@@ -1,5 +1,5 @@
 'use client'
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface CategoryButton {
@@ -53,6 +53,12 @@ const randomBG = [
 
 "https://images.ctfassets.net/kftzwdyauwt9/2STrOu0d3xz2yHksnLDGNg/54c78f54d3357e7f626fa9a74bad80c7/03_Prompt_Caching.png?w=640&q=90&fm=webp", 
 
+"https://images.ctfassets.net/kftzwdyauwt9/2PXUNHSP4R9aDSrbSwhIXs/9ea5be5ccfa6fee504c9696ed021afaa/Day9_4x5_thumbnailcard.jpg?w=640&q=90&fm=webp", 
+
+"https://images.ctfassets.net/kftzwdyauwt9/276ZCBF00jyAWYSLvNC4bh/1f7b896a1941e789c4df9d3ef9d441bb/let-your-imagination-run-wild.jpg?w=640&q=90&fm=webp",
+
+"https://images.ctfassets.net/kftzwdyauwt9/iMbo3U5LJBXTSvvfMAtFB/74de576fa7c2e1683f8d3aa26771d67b/Le_Monde_and_Prisa_Media.jpg?w=640&q=90&fm=webp"
+
 ]
 
 
@@ -61,6 +67,7 @@ interface BlogPost {
   title: string;
   category: string;
   content: string;
+  timestamp?: string;
 }
 
 const BlogPage = () => {
@@ -69,10 +76,14 @@ const BlogPage = () => {
   const router = useRouter();
 
   useEffect(() => {
+    // First, get local posts
+    const localPosts = JSON.parse(localStorage.getItem('localBlogPosts') || '[]');
+
+    // Fetch WordPress posts
     fetch("https://www.kodnest.com/wp-json/wp/v2/posts")
       .then((response) => response.json())
       .then((data) => {
-        const formattedData = data.map((e: any) => ({
+        const formattedData = data.map((e: BlogPost) => ({
           id: e.id,
           title: e.title.rendered,
           category: e.class_list[e.class_list.length - 1]
@@ -81,28 +92,47 @@ const BlogPage = () => {
             .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
             .join(" "),
           content: e.content.rendered,
+          date: e.date
         }));
-        setBlogPosts(formattedData);
+        
+        setBlogPosts([...formattedData, ...localPosts]);
       })
-      .catch((error) => console.error('Error fetching blog posts:', error));
+      .catch((error) => {
+        console.error('Error fetching blog posts:', error);
+        setBlogPosts(localPosts);
+      });
   }, []);
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 300; // Width of one card
-      const newScrollPosition = scrollContainerRef.current.scrollLeft + 
+  // Group posts by category
+  const postsByCategory = useMemo(() => {
+    const grouped = blogPosts.reduce((acc: { [key: string]: BlogPost[] }, post) => {
+      const category = post.category || 'Uncategorized';
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(post);
+      return acc;
+    }, {});
+    return grouped;
+  }, [blogPosts]);
+
+  const handleCardClick = (postId: number) => {
+    router.push(`/blog/post/${postId}`);
+  };
+
+  // Scroll function for each carousel
+  const scroll = (direction: 'left' | 'right', containerId: string) => {
+    const container = document.getElementById(containerId);
+    if (container) {
+      const scrollAmount = 300;
+      const newScrollPosition = container.scrollLeft + 
         (direction === 'left' ? -scrollAmount : scrollAmount);
       
-      scrollContainerRef.current.scrollTo({
+      container.scrollTo({
         left: newScrollPosition,
         behavior: 'smooth'
       });
     }
-  };
-
-  // Function to handle card click
-  const handleCardClick = (postId: number) => {
-    router.push(`/blog/post/${postId}`);
   };
 
   return (
@@ -145,67 +175,68 @@ const BlogPage = () => {
         ))}
       </div>
 
-      {/* Products Section */}
-      <div className="mb-12">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold">Kodnest Blog - A new era of Learning</h2>
-          <div className="flex gap-2">
-            <button 
-              onClick={() => scroll('left')}
-              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-              aria-label="Scroll left"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button 
-              onClick={() => scroll('right')}
-              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-              aria-label="Scroll right"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+      {/* Blog Posts by Category */}
+      {Object.entries(postsByCategory).map(([category, posts], categoryIndex) => (
+        <div key={category} className="mb-12">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-semibold">{category}</h2>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => scroll('left', `carousel-${categoryIndex}`)}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="Scroll left"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button 
+                onClick={() => scroll('right', `carousel-${categoryIndex}`)}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="Scroll right"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div 
+            id={`carousel-${categoryIndex}`}
+            className="flex gap-4 overflow-x-auto p-4 -mx-4 px-4 scroll-smooth scrollbar-hide"
+          >
+            {posts.map((post, index) => (
+              <article 
+                key={post.id} 
+                className="flex-none w-[300px] h-[400px] rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 p-6 relative cursor-pointer transition-transform hover:scale-[1.02] overflow-hidden"
+                onClick={() => handleCardClick(post.id)}
+                style={{
+                  backgroundImage: `url(${randomBG[(categoryIndex * category.length + index) % randomBG.length]})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat'
+                }}
+              >
+                <div className="absolute inset-0 bg-black/30"></div>
+                
+                <div className="flex flex-col h-full relative z-10">
+                  <div className="mb-auto">
+                    <span className="text-sm text-white font-medium bg-black/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                      {post.category}
+                    </span>
+                  </div>
+                  <div className="mt-auto">
+                    <h3 className="text-2xl font-semibold text-white drop-shadow-md">
+                      {post.title}
+                    </h3>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
-
-        {/* Blog Posts Carousel */}
-        <div 
-          ref={scrollContainerRef}
-          className="flex gap-4 overflow-x-auto p-4 -mx-4 px-4 scroll-smooth scrollbar-hide"
-        >
-          {blogPosts.map((post, index) => (
-            <article 
-              key={post.id} 
-              className={`flex-none w-[300px] h-[400px] rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 p-6 relative cursor-pointer transition-transform hover:scale-[1.02] overflow-hidden`}
-              onClick={() => handleCardClick(post.id)}
-              style={{
-                backgroundImage: `url(${randomBG[index]})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
-              }}
-            >
-              <div className="absolute inset-0 bg-black/30"></div>
-              
-              <div className="flex flex-col h-full relative z-10">
-                <div className="mb-auto">
-                  <span className="text-sm text-white font-medium bg-black/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                    {post.category}
-                  </span>
-                </div>
-                <div className="mt-auto">
-                  <h3 className="text-2xl font-semibold text-white drop-shadow-md">
-                    {post.title}
-                  </h3>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
+      ))}
     </div>
   );
 };
